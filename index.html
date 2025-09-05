@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Challenge - Step Out of Your Routine</title>
+    <meta name="description" content="Discover a new daily challenge to help you step out of your routine and grow personally. Get motivated with our curated challenges across different categories.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>Daily Challenge</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#challenges" class="nav-link">Challenges</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Step Out of Your Routine</h1>
+                <p>Discover a new daily challenge designed to help you grow, explore, and embrace new experiences. Each day brings a fresh opportunity to break free from the ordinary.</p>
+                <div class="hero-buttons">
+                    <button id="getChallengeBtn" class="btn-primary">Get Today's Challenge</button>
+                    <button id="shareBtn" class="btn-secondary">Share Your Experience</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenge Display Section -->
+    <section id="challenges" class="challenge-section">
+        <div class="container">
+            <div class="challenge-header">
+                <h2>Today's Challenge</h2>
+                <div class="challenge-categories">
+                    <button class="category-btn active" data-category="all">All</button>
+                    <button class="category-btn" data-category="self-care">Self-care</button>
+                    <button class="category-btn" data-category="social">Social</button>
+                    <button class="category-btn" data-category="outdoor">Outdoor</button>
+                    <button class="category-btn" data-category="fitness">Fitness</button>
+                    <button class="category-btn" data-category="creative">Creative</button>
+                </div>
+            </div>
+            
+            <div class="challenge-card">
+                <div class="challenge-content">
+                    <div class="challenge-meta">
+                        <span id="challengeCategory" class="challenge-category">Self-care</span>
+                        <span id="challengeDifficulty" class="challenge-difficulty easy">Easy</span>
+                    </div>
+                    <h3 id="challengeText">Take a 10-minute walk outside and notice three things you've never seen before</h3>
+                    <div class="challenge-actions">
+                        <button id="newChallengeBtn" class="btn-outline">Get New Challenge</button>
+                        <button id="markCompleteBtn" class="btn-success">Mark Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenge History -->
+            <div class="challenge-history">
+                <h3>Recent Challenges</h3>
+                <div id="challengeHistory" class="history-list">
+                    <!-- Dynamic content will be added here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <h2>About Daily Challenge</h2>
+                <p>Our mission is to help you break free from the monotony of daily routines and discover new experiences that enrich your life. Each challenge is carefully curated to be achievable yet meaningful, designed to push you gently out of your comfort zone.</p>
+                <div class="about-features">
+                    <div class="feature">
+                        <div class="feature-icon"></div>
+                        <h3>Personalized</h3>
+                        <p>Challenges tailored to your interests and comfort level</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon"></div>
+                        <h3>Accessible</h3>
+                        <p>Available anytime, anywhere on any device</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon"></div>
+                        <h3>Growth-Focused</h3>
+                        <p>Designed to promote personal development and well-being</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <h2>Get in Touch</h2>
+                <p>Have a challenge idea or feedback? We'd love to hear from you!</p>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Daily Challenge</h3>
+                    <p>Empowering you to step out of your routine and embrace new experiences every day.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">Instagram</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#challenges">Challenges</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="#" data-category="self-care">Self-care</a></li>
+                        <li><a href="#" data-category="social">Social</a></li>
+                        <li><a href="#" data-category="outdoor">Outdoor</a></li>
+                        <li><a href="#" data-category="fitness">Fitness</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Daily Challenge. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
