@@ -202,102 +202,198 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup all event listeners
     setupEventListeners();
     
+    // Also setup event delegation as backup
+    setupEventDelegation();
+    
     console.log('App initialized successfully');
 });
+
+// Event delegation as backup
+function setupEventDelegation() {
+    console.log('Setting up event delegation...');
+    
+    // Use event delegation for all buttons
+    document.addEventListener('click', function(e) {
+        console.log('Click detected on:', e.target);
+        
+        // Get Today's Challenge button
+        if (e.target && e.target.id === 'getChallengeBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Get Today\'s Challenge clicked (delegation)');
+            loadRandomChallenge();
+            scrollToChallengeSection();
+            return;
+        }
+        
+        // Get New Challenge button
+        if (e.target && e.target.id === 'newChallengeBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Get New Challenge clicked (delegation)');
+            loadRandomChallenge();
+            return;
+        }
+        
+        // Mark Complete button
+        if (e.target && e.target.id === 'markCompleteBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Mark Complete clicked (delegation)');
+            markChallengeComplete();
+            return;
+        }
+        
+        // Share button
+        if (e.target && e.target.id === 'shareBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Share clicked (delegation)');
+            shareChallenge();
+            return;
+        }
+        
+        // Category buttons
+        if (e.target && e.target.classList.contains('category-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const category = e.target.getAttribute('data-category');
+            console.log('Category clicked (delegation):', category);
+            setActiveCategory(category);
+            loadRandomChallenge();
+            return;
+        }
+        
+        // Hamburger menu
+        if (e.target && e.target.classList.contains('hamburger')) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Hamburger clicked (delegation)');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+                e.target.classList.toggle('active');
+            }
+            return;
+        }
+    });
+    
+    console.log('Event delegation setup complete');
+}
 
 // Setup all event listeners
 function setupEventListeners() {
     console.log('Setting up event listeners...');
     
-    // Get Today's Challenge button
-    const getChallengeBtn = document.getElementById('getChallengeBtn');
-    if (getChallengeBtn) {
-        getChallengeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Get Today\'s Challenge clicked');
-            loadRandomChallenge();
-            scrollToChallengeSection();
+    // Wait a bit for DOM to be fully ready
+    setTimeout(() => {
+        console.log('Setting up event listeners after delay...');
+        
+        // Get Today's Challenge button
+        const getChallengeBtn = document.getElementById('getChallengeBtn');
+        console.log('Get Challenge button found:', !!getChallengeBtn);
+        if (getChallengeBtn) {
+            getChallengeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Get Today\'s Challenge clicked');
+                loadRandomChallenge();
+                scrollToChallengeSection();
+            });
+        }
+        
+        // Get New Challenge button
+        const newChallengeBtn = document.getElementById('newChallengeBtn');
+        console.log('New Challenge button found:', !!newChallengeBtn);
+        if (newChallengeBtn) {
+            newChallengeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Get New Challenge clicked');
+                loadRandomChallenge();
+            });
+        }
+        
+        // Mark Complete button
+        const markCompleteBtn = document.getElementById('markCompleteBtn');
+        console.log('Mark Complete button found:', !!markCompleteBtn);
+        if (markCompleteBtn) {
+            markCompleteBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Mark Complete clicked');
+                markChallengeComplete();
+            });
+        }
+        
+        // Share button
+        const shareBtn = document.getElementById('shareBtn');
+        console.log('Share button found:', !!shareBtn);
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Share clicked');
+                shareChallenge();
+            });
+        }
+        
+        // Category buttons
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        console.log('Category buttons found:', categoryBtns.length);
+        categoryBtns.forEach((btn, index) => {
+            console.log(`Category button ${index}:`, btn.textContent, btn.getAttribute('data-category'));
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const category = this.getAttribute('data-category');
+                console.log('Category clicked:', category);
+                setActiveCategory(category);
+                loadRandomChallenge();
+            });
         });
-    }
-    
-    // Get New Challenge button
-    const newChallengeBtn = document.getElementById('newChallengeBtn');
-    if (newChallengeBtn) {
-        newChallengeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Get New Challenge clicked');
-            loadRandomChallenge();
+        
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        console.log('Hamburger found:', !!hamburger, 'Nav menu found:', !!navMenu);
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                console.log('Hamburger clicked');
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+        }
+        
+        // Contact form
+        const contactForm = document.querySelector('.contact-form');
+        console.log('Contact form found:', !!contactForm);
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Contact form submitted');
+                handleContactForm(e);
+            });
+        }
+        
+        // Smooth scrolling for navigation links
+        const navLinks = document.querySelectorAll('a[href^="#"]');
+        console.log('Nav links found:', navLinks.length);
+        navLinks.forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
-    }
-    
-    // Mark Complete button
-    const markCompleteBtn = document.getElementById('markCompleteBtn');
-    if (markCompleteBtn) {
-        markCompleteBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Mark Complete clicked');
-            markChallengeComplete();
-        });
-    }
-    
-    // Share button
-    const shareBtn = document.getElementById('shareBtn');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Share clicked');
-            shareChallenge();
-        });
-    }
-    
-    // Category buttons
-    const categoryBtns = document.querySelectorAll('.category-btn');
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const category = this.getAttribute('data-category');
-            console.log('Category clicked:', category);
-            setActiveCategory(category);
-            loadRandomChallenge();
-        });
-    });
-    
-    // Mobile menu toggle
-    const hamburger = document.querySelector('.hamburger');
-    const navMenu = document.querySelector('.nav-menu');
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', function() {
-            console.log('Hamburger clicked');
-            navMenu.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        });
-    }
-    
-    // Contact form
-    const contactForm = document.querySelector('.contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('Contact form submitted');
-            handleContactForm(e);
-        });
-    }
-    
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-    
-    console.log('Event listeners setup complete');
+        
+        console.log('Event listeners setup complete');
+    }, 100);
 }
 
 // Set active category

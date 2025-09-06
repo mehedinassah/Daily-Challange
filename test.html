@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; }
+        .test-section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Button Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Challenge Buttons</h2>
+        <button id="getChallengeBtn">Get Today's Challenge</button>
+        <button id="newChallengeBtn">Get New Challenge</button>
+        <button id="markCompleteBtn">Mark Complete</button>
+        <button id="shareBtn">Share</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Category Buttons</h2>
+        <button class="category-btn" data-category="all">All</button>
+        <button class="category-btn" data-category="self-care">Self-care</button>
+        <button class="category-btn" data-category="social">Social</button>
+        <button class="category-btn" data-category="outdoor">Outdoor</button>
+        <button class="category-btn" data-category="fitness">Fitness</button>
+        <button class="category-btn" data-category="creative">Creative</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        console.log('Test page loaded');
+        
+        // Test button detection
+        function testButtons() {
+            const results = document.getElementById('testResults');
+            let html = '<h3>Button Detection Test:</h3>';
+            
+            // Test challenge buttons
+            const getChallengeBtn = document.getElementById('getChallengeBtn');
+            const newChallengeBtn = document.getElementById('newChallengeBtn');
+            const markCompleteBtn = document.getElementById('markCompleteBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            
+            html += `<p>Get Challenge Button: ${getChallengeBtn ? 'FOUND' : 'NOT FOUND'}</p>`;
+            html += `<p>New Challenge Button: ${newChallengeBtn ? 'FOUND' : 'NOT FOUND'}</p>`;
+            html += `<p>Mark Complete Button: ${markCompleteBtn ? 'FOUND' : 'NOT FOUND'}</p>`;
+            html += `<p>Share Button: ${shareBtn ? 'FOUND' : 'NOT FOUND'}</p>`;
+            
+            // Test category buttons
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            html += `<p>Category Buttons: ${categoryBtns.length} found</p>`;
+            
+            results.innerHTML = html;
+        }
+        
+        // Test event listeners
+        function testEventListeners() {
+            console.log('Setting up test event listeners...');
+            
+            // Get Today's Challenge button
+            const getChallengeBtn = document.getElementById('getChallengeBtn');
+            if (getChallengeBtn) {
+                getChallengeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Get Today\'s Challenge clicked!');
+                    alert('Get Today\'s Challenge clicked!');
+                });
+            }
+            
+            // Get New Challenge button
+            const newChallengeBtn = document.getElementById('newChallengeBtn');
+            if (newChallengeBtn) {
+                newChallengeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Get New Challenge clicked!');
+                    alert('Get New Challenge clicked!');
+                });
+            }
+            
+            // Mark Complete button
+            const markCompleteBtn = document.getElementById('markCompleteBtn');
+            if (markCompleteBtn) {
+                markCompleteBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Mark Complete clicked!');
+                    alert('Mark Complete clicked!');
+                });
+            }
+            
+            // Share button
+            const shareBtn = document.getElementById('shareBtn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Share clicked!');
+                    alert('Share clicked!');
+                });
+            }
+            
+            // Category buttons
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            categoryBtns.forEach((btn, index) => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.getAttribute('data-category');
+                    console.log('Category clicked:', category);
+                    alert(`Category clicked: ${category}`);
+                });
+            });
+        }
+        
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, running tests...');
+            testButtons();
+            testEventListeners();
+        });
+    </script>
+</body>
+</html>

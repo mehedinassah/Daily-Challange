@@ -54,12 +54,12 @@
             <div class="challenge-header">
                 <h2>Today's Challenge</h2>
                 <div class="challenge-categories">
-                    <button class="category-btn active" data-category="all">All</button>
-                    <button class="category-btn" data-category="self-care">Self-care</button>
-                    <button class="category-btn" data-category="social">Social</button>
-                    <button class="category-btn" data-category="outdoor">Outdoor</button>
-                    <button class="category-btn" data-category="fitness">Fitness</button>
-                    <button class="category-btn" data-category="creative">Creative</button>
+                    <button class="category-btn active" data-category="all" onclick="console.log('All clicked inline'); setActiveCategory('all'); loadRandomChallenge();">All</button>
+                    <button class="category-btn" data-category="self-care" onclick="console.log('Self-care clicked inline'); setActiveCategory('self-care'); loadRandomChallenge();">Self-care</button>
+                    <button class="category-btn" data-category="social" onclick="console.log('Social clicked inline'); setActiveCategory('social'); loadRandomChallenge();">Social</button>
+                    <button class="category-btn" data-category="outdoor" onclick="console.log('Outdoor clicked inline'); setActiveCategory('outdoor'); loadRandomChallenge();">Outdoor</button>
+                    <button class="category-btn" data-category="fitness" onclick="console.log('Fitness clicked inline'); setActiveCategory('fitness'); loadRandomChallenge();">Fitness</button>
+                    <button class="category-btn" data-category="creative" onclick="console.log('Creative clicked inline'); setActiveCategory('creative'); loadRandomChallenge();">Creative</button>
                 </div>
             </div>
             
@@ -71,8 +71,8 @@
                     </div>
                     <h3 id="challengeText">Take a 10-minute walk outside and notice three things you've never seen before</h3>
                     <div class="challenge-actions">
-                        <button id="newChallengeBtn" class="btn-outline">Get New Challenge</button>
-                        <button id="markCompleteBtn" class="btn-success">Mark Complete</button>
+                        <button id="newChallengeBtn" class="btn-outline" onclick="console.log('New Challenge clicked inline'); loadRandomChallenge();">Get New Challenge</button>
+                        <button id="markCompleteBtn" class="btn-success" onclick="console.log('Mark Complete clicked inline'); markChallengeComplete();">Mark Complete</button>
                     </div>
                 </div>
             </div>
