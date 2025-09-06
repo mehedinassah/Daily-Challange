@@ -204,9 +204,9 @@ body {
 }
 
 .btn-primary {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--gradient-primary);
     color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid transparent;
     backdrop-filter: blur(10px);
 }
 
@@ -551,6 +551,29 @@ body {
 .form-group textarea {
     resize: vertical;
     min-height: 120px;
+}
+
+/* Contact form button specific styling */
+.contact-form .btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+    display: block;
+}
+
+.contact-form .btn-primary:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 /* Footer */

@@ -638,7 +638,13 @@ function handleContactForm(e) {
     submitBtn.disabled = true;
     
     setTimeout(() => {
-        showNotification('Thank you for your message! We\'ll get back to you soon.');
+        // Show popup message
+        alert('Thank you for your kind feedback.');
+        
+        // Also show notification
+        showNotification('Thank you for your kind feedback.');
+        
+        // Reset form
         e.target.reset();
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -694,6 +700,23 @@ function scrollToChallengeSection() {
         const navbar = document.querySelector('.navbar');
         const navbarHeight = navbar ? navbar.offsetHeight : 0;
         const offsetTop = challengeSection.offsetTop - navbarHeight - 20;
+        
+        window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Scroll to contact section
+function scrollToContactSection() {
+    console.log('Scrolling to contact section');
+    
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+        const navbar = document.querySelector('.navbar');
+        const navbarHeight = navbar ? navbar.offsetHeight : 0;
+        const offsetTop = contactSection.offsetTop - navbarHeight - 20;
         
         window.scrollTo({
             top: offsetTop,
@@ -770,8 +793,42 @@ window.addEventListener('load', () => {
         }, 300 + (index * 100));
     });
     
-    // Add scroll animations
+    // Add scroll animatios
     addScrollAnimations();
 });
+
+// Inline contact form handler
+function handleContactFormInline(e) {
+    e.preventDefault();
+    console.log('Contact form submitted inline');
+    
+    // Get form data
+    const form = e.target.closest('form');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Form data:', data);
+    
+    // Get submit button
+    const submitBtn = e.target;
+    const originalText = submitBtn.textContent;
+    
+    // Show sending state
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    // Simulate sending
+    setTimeout(() => {
+        // Show popup
+        alert('Thank you for your kind feedback.');
+        
+        // Reset form
+        form.reset();
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        console.log('Form submitted successfully');
+    }, 2000);
+}
 
 console.log('Script loaded successfully');

@@ -41,8 +41,8 @@
                 <h1>Step Out of Your Routine</h1>
                 <p>Discover a new daily challenge designed to help you grow, explore, and embrace new experiences. Each day brings a fresh opportunity to break free from the ordinary.</p>
                 <div class="hero-buttons">
-                    <button id="getChallengeBtn" class="btn-primary">Get Today's Challenge</button>
-                    <button id="shareBtn" class="btn-secondary">Share Your Experience</button>
+                    <button id="getChallengeBtn" class="btn-primary" onclick="scrollToChallengeSection(); loadRandomChallenge();">Get Today's Challenge</button>
+                    <button id="shareBtn" class="btn-secondary" onclick="scrollToContactSection();">Share Your Experience</button>
                 </div>
             </div>
         </div>
@@ -130,7 +130,7 @@
                     <div class="form-group">
                         <textarea id="message" name="message" placeholder="Your Message" rows="5" required></textarea>
                     </div>
-                    <button type="submit" class="btn-primary">Send Message</button>
+                    <button type="submit" class="btn-primary" onclick="console.log('Send Message clicked'); handleContactFormInline(event);">Send Message</button>
                 </form>
             </div>
         </div>
