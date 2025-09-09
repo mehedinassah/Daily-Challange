@@ -173,148 +173,321 @@ const challenges = {
     ]
 };
 
-// DOM elements
-const getChallengeBtn = document.getElementById('getChallengeBtn');
-const newChallengeBtn = document.getElementById('newChallengeBtn');
-const markCompleteBtn = document.getElementById('markCompleteBtn');
-const shareBtn = document.getElementById('shareBtn');
-const challengeText = document.getElementById('challengeText');
-const challengeCategory = document.getElementById('challengeCategory');
-const challengeDifficulty = document.getElementById('challengeDifficulty');
-const challengeHistory = document.getElementById('challengeHistory');
-const categoryBtns = document.querySelectorAll('.category-btn');
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-const contactForm = document.querySelector('.contact-form');
-
-// State
+// Global variables
 let currentCategory = 'all';
-let completedChallenges = JSON.parse(localStorage.getItem('completedChallenges')) || [];
+let completedChallenges = [];
 let currentChallenge = null;
 
-// Initialize the app
+// Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing app...');
+    
+    // Load completed challenges from localStorage
+    const saved = localStorage.getItem('completedChallenges');
+    if (saved) {
+        try {
+            completedChallenges = JSON.parse(saved);
+        } catch (e) {
+            console.error('Error parsing saved challenges:', e);
+            completedChallenges = [];
+        }
+    }
+    
+    // Load initial challenge
     loadRandomChallenge();
+    
+    // Update challenge history
     updateChallengeHistory();
+    
+    // Setup all event listeners
     setupEventListeners();
-    addScrollAnimations();
+    
+    // Also setup event delegation as backup
+    setupEventDelegation();
+    
+    console.log('App initialized successfully');
 });
 
-// Event listeners
-function setupEventListeners() {
-    // Navigation
-    hamburger.addEventListener('click', toggleMobileMenu);
+// Event delegation as backup
+function setupEventDelegation() {
+    console.log('Setting up event delegation...');
     
-    // Challenge buttons
-    getChallengeBtn.addEventListener('click', () => {
-        loadRandomChallenge();
-        scrollToChallengeSection();
-    });
-    newChallengeBtn.addEventListener('click', loadRandomChallenge);
-    markCompleteBtn.addEventListener('click', markChallengeComplete);
-    shareBtn.addEventListener('click', shareChallenge);
-    
-    // Category filters
-    categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            setActiveCategory(btn.dataset.category);
-            loadRandomChallenge();
-        });
-    });
-    
-    // Contact form
-    contactForm.addEventListener('submit', handleContactForm);
-    
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+    // Use event delegation for all buttons
+    document.addEventListener('click', function(e) {
+        console.log('Click detected on:', e.target);
+        
+        // Get Today's Challenge button
+        if (e.target && e.target.id === 'getChallengeBtn') {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            e.stopPropagation();
+            console.log('Get Today\'s Challenge clicked (delegation)');
+            loadRandomChallenge();
+            scrollToChallengeSection();
+            return;
+        }
+        
+        // Get New Challenge button
+        if (e.target && e.target.id === 'newChallengeBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Get New Challenge clicked (delegation)');
+            loadRandomChallenge();
+            return;
+        }
+        
+        // Mark Complete button
+        if (e.target && e.target.id === 'markCompleteBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Mark Complete clicked (delegation)');
+            markChallengeComplete();
+            return;
+        }
+        
+        // Share button
+        if (e.target && e.target.id === 'shareBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Share clicked (delegation)');
+            shareChallenge();
+            return;
+        }
+        
+        // Category buttons
+        if (e.target && e.target.classList.contains('category-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const category = e.target.getAttribute('data-category');
+            console.log('Category clicked (delegation):', category);
+            setActiveCategory(category);
+            loadRandomChallenge();
+            return;
+        }
+        
+        // Hamburger menu
+        if (e.target && e.target.classList.contains('hamburger')) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Hamburger clicked (delegation)');
+            const navMenu = document.querySelector('.nav-menu');
+            if (navMenu) {
+                navMenu.classList.toggle('active');
+                e.target.classList.toggle('active');
             }
-        });
+            return;
+        }
     });
     
-    // Close mobile menu when clicking on a link
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            navMenu.classList.remove('active');
-            hamburger.classList.remove('active');
-        });
-    });
+    console.log('Event delegation setup complete');
 }
 
-// Mobile menu toggle
-function toggleMobileMenu() {
-    navMenu.classList.toggle('active');
-    hamburger.classList.toggle('active');
+// Setup all event listeners
+function setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
+    // Wait a bit for DOM to be fully ready
+    setTimeout(() => {
+        console.log('Setting up event listeners after delay...');
+        
+        // Get Today's Challenge button
+        const getChallengeBtn = document.getElementById('getChallengeBtn');
+        console.log('Get Challenge button found:', !!getChallengeBtn);
+        if (getChallengeBtn) {
+            getChallengeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Get Today\'s Challenge clicked');
+                loadRandomChallenge();
+                scrollToChallengeSection();
+            });
+        }
+        
+        // Get New Challenge button
+        const newChallengeBtn = document.getElementById('newChallengeBtn');
+        console.log('New Challenge button found:', !!newChallengeBtn);
+        if (newChallengeBtn) {
+            newChallengeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Get New Challenge clicked');
+                loadRandomChallenge();
+            });
+        }
+        
+        // Mark Complete button
+        const markCompleteBtn = document.getElementById('markCompleteBtn');
+        console.log('Mark Complete button found:', !!markCompleteBtn);
+        if (markCompleteBtn) {
+            markCompleteBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Mark Complete clicked');
+                markChallengeComplete();
+            });
+        }
+        
+        // Share button
+        const shareBtn = document.getElementById('shareBtn');
+        console.log('Share button found:', !!shareBtn);
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Share clicked');
+                shareChallenge();
+            });
+        }
+        
+        // Category buttons
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        console.log('Category buttons found:', categoryBtns.length);
+        categoryBtns.forEach((btn, index) => {
+            console.log(`Category button ${index}:`, btn.textContent, btn.getAttribute('data-category'));
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const category = this.getAttribute('data-category');
+                console.log('Category clicked:', category);
+                setActiveCategory(category);
+                loadRandomChallenge();
+            });
+        });
+        
+        // Mobile menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        console.log('Hamburger found:', !!hamburger, 'Nav menu found:', !!navMenu);
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', function() {
+                console.log('Hamburger clicked');
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+        }
+        
+        // Contact form
+        const contactForm = document.querySelector('.contact-form');
+        console.log('Contact form found:', !!contactForm);
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Contact form submitted');
+                handleContactForm(e);
+            });
+        }
+        
+        // Smooth scrolling for navigation links
+        const navLinks = document.querySelectorAll('a[href^="#"]');
+        console.log('Nav links found:', navLinks.length);
+        navLinks.forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        console.log('Event listeners setup complete');
+    }, 100);
 }
 
 // Set active category
 function setActiveCategory(category) {
+    console.log('Setting active category to:', category);
+    
+    // Update button states
+    const categoryBtns = document.querySelectorAll('.category-btn');
     categoryBtns.forEach(btn => {
         btn.classList.remove('active');
-        if (btn.dataset.category === category) {
+        if (btn.getAttribute('data-category') === category) {
             btn.classList.add('active');
         }
     });
+    
     currentCategory = category;
 }
 
 // Load random challenge
 function loadRandomChallenge() {
+    console.log('Loading random challenge for category:', currentCategory);
+    
     let availableChallenges = [];
     
     if (currentCategory === 'all') {
+        // Get all challenges from all categories
         Object.values(challenges).forEach(categoryChallenges => {
             availableChallenges = availableChallenges.concat(categoryChallenges);
         });
     } else {
+        // Get challenges from specific category
         availableChallenges = challenges[currentCategory] || [];
     }
     
+    console.log('Available challenges:', availableChallenges.length);
+    
     if (availableChallenges.length === 0) {
-        challengeText.textContent = "No challenges available for this category.";
-        challengeCategory.textContent = currentCategory;
-        challengeDifficulty.textContent = "N/A";
-        challengeDifficulty.className = "challenge-difficulty";
+        console.log('No challenges available');
+        updateChallengeDisplay("No challenges available for this category.", currentCategory, "N/A");
         return;
     }
     
-    // Avoid repeating the same challenge
-    let challenge;
-    let attempts = 0;
-    do {
-        const randomIndex = Math.floor(Math.random() * availableChallenges.length);
-        challenge = availableChallenges[randomIndex];
-        attempts++;
-    } while (currentChallenge && challenge.text === currentChallenge.text && attempts < 10);
+    // Select random challenge
+    const randomIndex = Math.floor(Math.random() * availableChallenges.length);
+    const challenge = availableChallenges[randomIndex];
     
+    // Determine category for display
+    let displayCategory = currentCategory;
+    if (currentCategory === 'all') {
+        displayCategory = getChallengeCategory(challenge);
+    }
+    
+    // Store current challenge
     currentChallenge = {
         ...challenge,
-        category: currentCategory === 'all' ? getChallengeCategory(challenge) : currentCategory,
+        category: displayCategory,
         timestamp: new Date().toISOString()
     };
     
-    // Update UI
-    challengeText.textContent = challenge.text;
-    challengeCategory.textContent = currentChallenge.category;
-    challengeDifficulty.textContent = challenge.difficulty;
-    challengeDifficulty.className = `challenge-difficulty ${challenge.difficulty}`;
+    console.log('Selected challenge:', currentChallenge);
+    
+    // Update display
+    updateChallengeDisplay(challenge.text, displayCategory, challenge.difficulty);
     
     // Add animation
     const challengeCard = document.querySelector('.challenge-card');
-    challengeCard.classList.add('fade-in-up');
-    setTimeout(() => challengeCard.classList.remove('fade-in-up'), 600);
+    if (challengeCard) {
+        challengeCard.classList.add('fade-in-up');
+        setTimeout(() => challengeCard.classList.remove('fade-in-up'), 600);
+    }
     
     // Reset mark complete button
-    markCompleteBtn.textContent = 'Mark Complete';
-    markCompleteBtn.disabled = false;
-    markCompleteBtn.classList.remove('success-animation');
+    const markCompleteBtn = document.getElementById('markCompleteBtn');
+    if (markCompleteBtn) {
+        markCompleteBtn.textContent = 'Mark Complete';
+        markCompleteBtn.disabled = false;
+        markCompleteBtn.classList.remove('success-animation');
+    }
+}
+
+// Update challenge display
+function updateChallengeDisplay(text, category, difficulty) {
+    console.log('Updating challenge display:', { text, category, difficulty });
+    
+    const challengeText = document.getElementById('challengeText');
+    const challengeCategory = document.getElementById('challengeCategory');
+    const challengeDifficulty = document.getElementById('challengeDifficulty');
+    
+    if (challengeText) challengeText.textContent = text;
+    if (challengeCategory) challengeCategory.textContent = category;
+    if (challengeDifficulty) {
+        challengeDifficulty.textContent = difficulty;
+        challengeDifficulty.className = `challenge-difficulty ${difficulty}`;
+    }
 }
 
 // Get challenge category for 'all' category
@@ -329,24 +502,40 @@ function getChallengeCategory(challenge) {
 
 // Mark challenge as complete
 function markChallengeComplete() {
-    if (!currentChallenge) return;
+    if (!currentChallenge) {
+        console.log('No current challenge to mark complete');
+        showNotification('No challenge to mark complete!');
+        return;
+    }
+    
+    console.log('Marking challenge as complete:', currentChallenge);
     
     // Add to completed challenges
-    completedChallenges.unshift({
+    const completedChallenge = {
         ...currentChallenge,
         completedAt: new Date().toISOString()
-    });
+    };
+    
+    completedChallenges.unshift(completedChallenge);
     
     // Keep only last 10 completed challenges
     completedChallenges = completedChallenges.slice(0, 10);
     
     // Save to localStorage
-    localStorage.setItem('completedChallenges', JSON.stringify(completedChallenges));
+    try {
+        localStorage.setItem('completedChallenges', JSON.stringify(completedChallenges));
+        console.log('Saved to localStorage');
+    } catch (e) {
+        console.error('Error saving to localStorage:', e);
+    }
     
     // Update UI
-    markCompleteBtn.textContent = 'Completed!';
-    markCompleteBtn.classList.add('success-animation');
-    markCompleteBtn.disabled = true;
+    const markCompleteBtn = document.getElementById('markCompleteBtn');
+    if (markCompleteBtn) {
+        markCompleteBtn.textContent = 'Completed!';
+        markCompleteBtn.classList.add('success-animation');
+        markCompleteBtn.disabled = true;
+    }
     
     // Update history
     updateChallengeHistory();
@@ -356,14 +545,187 @@ function markChallengeComplete() {
     
     // Reset button after 2 seconds
     setTimeout(() => {
-        markCompleteBtn.textContent = 'Mark Complete';
-        markCompleteBtn.classList.remove('success-animation');
-        markCompleteBtn.disabled = false;
+        if (markCompleteBtn) {
+            markCompleteBtn.textContent = 'Mark Complete';
+            markCompleteBtn.classList.remove('success-animation');
+            markCompleteBtn.disabled = false;
+        }
     }, 2000);
 }
 
+// ===== Gamification State =====
+const defaultGamification = {
+    points: 0,
+    level: 1,
+    levelProgress: 0, // 0-1
+    streak: 0,
+    lastCompletedDate: null,
+    badges: {}
+};
+
+let gamification = loadGamification();
+
+function loadGamification() {
+    try {
+        const raw = localStorage.getItem('gamification');
+        if (!raw) return { ...defaultGamification };
+        const parsed = JSON.parse(raw);
+        return { ...defaultGamification, ...parsed };
+    } catch (e) {
+        console.error('Failed to load gamification:', e);
+        return { ...defaultGamification };
+    }
+}
+
+function saveGamification() {
+    localStorage.setItem('gamification', JSON.stringify(gamification));
+}
+
+function getLevelThreshold(level) {
+    // Quadratic growth: 100, 300, 600, 1000, ...
+    return 50 * level * (level + 1);
+}
+
+function addPoints(basePoints) {
+    const points = Math.max(1, basePoints);
+    gamification.points += points;
+
+    // Level calc
+    const threshold = getLevelThreshold(gamification.level);
+    const totalForThisLevel = threshold;
+    const currentLevelStart = getLevelThreshold(gamification.level - 1) || 0;
+    const pointsIntoLevel = Math.max(0, gamification.points - currentLevelStart);
+    gamification.levelProgress = Math.min(1, pointsIntoLevel / (totalForThisLevel - currentLevelStart));
+
+    while (gamification.points >= getLevelThreshold(gamification.level)) {
+        gamification.level += 1;
+        showNotification(`Level up! You are now level ${gamification.level} 🔥`);
+        // Celebrate
+        unlockBadge('firstLevel', 'Level 2 Achieved', 'Reached level 2');
+    }
+
+    saveGamification();
+    updateGamificationUI();
+}
+
+function updateStreak() {
+    const today = new Date();
+    const todayKey = today.toDateString();
+    const last = gamification.lastCompletedDate ? new Date(gamification.lastCompletedDate).toDateString() : null;
+
+    if (last === todayKey) {
+        // already counted today
+        return;
+    }
+
+    if (last) {
+        const yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        if (new Date(last).toDateString() === yesterday.toDateString()) {
+            gamification.streak += 1;
+        } else {
+            gamification.streak = 1; // reset to 1 for today
+        }
+    } else {
+        gamification.streak = 1;
+    }
+
+    gamification.lastCompletedDate = today.toISOString();
+
+    // Streak badges
+    if (gamification.streak === 1) unlockBadge('firstDay', 'First Step', 'Completed your first challenge');
+    if (gamification.streak === 3) unlockBadge('threeDay', 'On A Roll', '3-day streak');
+    if (gamification.streak === 7) unlockBadge('sevenDay', 'One Week Warrior', '7-day streak');
+    if (gamification.streak === 30) unlockBadge('thirtyDay', 'Month Master', '30-day streak');
+
+    saveGamification();
+    updateGamificationUI();
+}
+
+function unlockBadge(key, title, desc) {
+    if (gamification.badges[key]) return;
+    gamification.badges[key] = { title, desc, unlockedAt: new Date().toISOString() };
+    saveGamification();
+    updateBadgesUI();
+    showNotification(`Badge unlocked: ${title} 🏅`);
+}
+
+function updateGamificationUI() {
+    const pointsEl = document.getElementById('statPoints');
+    const streakEl = document.getElementById('statStreak');
+    const levelEl = document.getElementById('statLevel');
+    const progressText = document.getElementById('levelProgressText');
+    const progressFill = document.getElementById('levelProgressFill');
+
+    if (pointsEl) pointsEl.textContent = gamification.points.toString();
+    if (streakEl) streakEl.textContent = gamification.streak.toString();
+    if (levelEl) levelEl.textContent = gamification.level.toString();
+    if (progressText) progressText.textContent = `${Math.round(gamification.levelProgress * 100)}%`;
+    if (progressFill) progressFill.style.width = `${Math.round(gamification.levelProgress * 100)}%`;
+}
+
+function updateBadgesUI() {
+    const grid = document.getElementById('badgesGrid');
+    if (!grid) return;
+
+    const allBadges = [
+        { key: 'firstDay', title: 'First Step', desc: 'Completed your first challenge', icon: '1' },
+        { key: 'threeDay', title: 'On A Roll', desc: '3-day streak', icon: '3' },
+        { key: 'sevenDay', title: 'One Week Warrior', desc: '7-day streak', icon: '7' },
+        { key: 'thirtyDay', title: 'Month Master', desc: '30-day streak', icon: '30' },
+        { key: 'firstLevel', title: 'Level 2 Achieved', desc: 'Reached level 2', icon: 'L2' },
+        { key: 'tenChallenges', title: 'Top Ten', desc: 'Completed 10 challenges', icon: '10' },
+        { key: 'fiftyChallenges', title: 'Fitty', desc: 'Completed 50 challenges', icon: '50' }
+    ];
+
+    grid.innerHTML = allBadges.map(b => {
+        const unlocked = !!gamification.badges[b.key];
+        return `
+            <div class="badge-card ${unlocked ? '' : 'locked'}">
+                <div class="badge-icon">${b.icon}</div>
+                <div class="badge-title">${b.title}</div>
+                <div class="badge-desc">${b.desc}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Hook into completion
+const originalMarkComplete = markChallengeComplete;
+markChallengeComplete = function() {
+    // Call original
+    originalMarkComplete.apply(this, arguments);
+
+    // Award points by difficulty
+    const diff = (currentChallenge && currentChallenge.difficulty) || 'easy';
+    const pointsMap = { easy: 10, medium: 20, hard: 35 };
+    addPoints(pointsMap[diff] || 10);
+
+    // Streak handling
+    updateStreak();
+
+    // Total completed badges
+    const totalCompleted = (JSON.parse(localStorage.getItem('completedChallenges') || '[]') || []).length;
+    if (totalCompleted >= 10) unlockBadge('tenChallenges', 'Top Ten', 'Completed 10 challenges');
+    if (totalCompleted >= 50) unlockBadge('fiftyChallenges', 'Fitty', 'Completed 50 challenges');
+}
+
+// Initialize UI on load
+document.addEventListener('DOMContentLoaded', () => {
+    updateGamificationUI();
+    updateBadgesUI();
+});
+
 // Update challenge history
 function updateChallengeHistory() {
+    console.log('Updating challenge history, completed challenges:', completedChallenges.length);
+    
+    const challengeHistory = document.getElementById('challengeHistory');
+    if (!challengeHistory) {
+        console.log('Challenge history element not found');
+        return;
+    }
+    
     if (completedChallenges.length === 0) {
         challengeHistory.innerHTML = '<p style="text-align: center; color: var(--text-light);">No completed challenges yet. Complete your first challenge to see it here!</p>';
         return;
@@ -385,7 +747,13 @@ function updateChallengeHistory() {
 
 // Share challenge
 function shareChallenge() {
-    if (!currentChallenge) return;
+    if (!currentChallenge) {
+        console.log('No current challenge to share');
+        showNotification('No challenge to share!');
+        return;
+    }
+    
+    console.log('Sharing challenge:', currentChallenge);
     
     const shareText = `I'm taking on today's challenge: "${currentChallenge.text}"\n\nJoin me at Daily Challenge!`;
     
@@ -394,35 +762,53 @@ function shareChallenge() {
             title: 'Daily Challenge',
             text: shareText,
             url: window.location.href
+        }).catch(err => {
+            console.log('Share failed:', err);
+            fallbackShare(shareText);
         });
     } else {
-        // Fallback: copy to clipboard
+        fallbackShare(shareText);
+    }
+}
+
+// Fallback share method
+function fallbackShare(shareText) {
+    if (navigator.clipboard) {
         navigator.clipboard.writeText(shareText).then(() => {
             showNotification('Challenge copied to clipboard!');
         }).catch(() => {
-            // Fallback: show in alert
-            alert(shareText);
+            showNotification(shareText);
         });
+    } else {
+        showNotification(shareText);
     }
 }
 
 // Handle contact form
 function handleContactForm(e) {
-    e.preventDefault();
+    console.log('Handling contact form submission');
     
-    const formData = new FormData(contactForm);
+    const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     
+    console.log('Form data:', data);
+    
     // Simulate form submission
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
     
     submitBtn.textContent = 'Sending...';
     submitBtn.disabled = true;
     
     setTimeout(() => {
-        showNotification('Thank you for your message! We\'ll get back to you soon.');
-        contactForm.reset();
+        // Show popup message
+        alert('Thank you for your kind feedback.');
+        
+        // Also show notification
+        showNotification('Thank you for your kind feedback.');
+        
+        // Reset form
+        e.target.reset();
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
     }, 2000);
@@ -430,6 +816,8 @@ function handleContactForm(e) {
 
 // Show notification
 function showNotification(message) {
+    console.log('Showing notification:', message);
+    
     // Create notification element
     const notification = document.createElement('div');
     notification.style.cssText = `
@@ -444,6 +832,7 @@ function showNotification(message) {
         z-index: 10000;
         transform: translateX(100%);
         transition: transform 0.3s ease;
+        max-width: 300px;
     `;
     notification.textContent = message;
     
@@ -458,18 +847,43 @@ function showNotification(message) {
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
-            document.body.removeChild(notification);
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
         }, 300);
     }, 3000);
 }
 
 // Scroll to challenge section
 function scrollToChallengeSection() {
+    console.log('Scrolling to challenge section');
+    
     const challengeSection = document.getElementById('challenges');
     if (challengeSection) {
-        challengeSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+        const navbar = document.querySelector('.navbar');
+        const navbarHeight = navbar ? navbar.offsetHeight : 0;
+        const offsetTop = challengeSection.offsetTop - navbarHeight - 20;
+        
+        window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Scroll to contact section
+function scrollToContactSection() {
+    console.log('Scrolling to contact section');
+    
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+        const navbar = document.querySelector('.navbar');
+        const navbarHeight = navbar ? navbar.offsetHeight : 0;
+        const offsetTop = contactSection.offsetTop - navbarHeight - 20;
+        
+        window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
         });
     }
 }
@@ -498,12 +912,14 @@ function addScrollAnimations() {
 // Navbar scroll effect
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
+    if (navbar) {
+        if (window.scrollY > 100) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.boxShadow = 'none';
+        }
     }
 });
 
@@ -522,23 +938,15 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Add loading states
-function addLoadingState(button, text = 'Loading...') {
-    const originalText = button.textContent;
-    button.innerHTML = `<span class="loading"></span> ${text}`;
-    button.disabled = true;
-    
-    return () => {
-        button.textContent = originalText;
-        button.disabled = false;
-    };
-}
-
 // Initialize challenge on page load
 window.addEventListener('load', () => {
+    console.log('Window loaded');
+    
     // Add fade-in animation to hero content
     const heroContent = document.querySelector('.hero-content');
-    heroContent.classList.add('fade-in');
+    if (heroContent) {
+        heroContent.classList.add('fade-in');
+    }
     
     // Add stagger animation to hero buttons
     const heroButtons = document.querySelectorAll('.hero-buttons button');
@@ -547,17 +955,43 @@ window.addEventListener('load', () => {
             btn.classList.add('fade-in-up');
         }, 300 + (index * 100));
     });
+    
+    // Add scroll animatios
+    addScrollAnimations();
 });
 
-// Service Worker registration (for PWA capabilities)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(registration => {
-                console.log('SW registered: ', registration);
-            })
-            .catch(registrationError => {
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
+// Inline contact form handler
+function handleContactFormInline(e) {
+    e.preventDefault();
+    console.log('Contact form submitted inline');
+    
+    // Get form data
+    const form = e.target.closest('form');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Form data:', data);
+    
+    // Get submit button
+    const submitBtn = e.target;
+    const originalText = submitBtn.textContent;
+    
+    // Show sending state
+    submitBtn.textContent = 'Sending...';
+    submitBtn.disabled = true;
+    
+    // Simulate sending
+    setTimeout(() => {
+        // Show popup
+        alert('Thank you for your kind feedback.');
+        
+        // Reset form
+        form.reset();
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        
+        console.log('Form submitted successfully');
+    }, 2000);
 }
+
+console.log('Script loaded successfully');
