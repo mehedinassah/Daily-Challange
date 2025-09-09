@@ -500,215 +500,98 @@ function getChallengeCategory(challenge) {
     return 'general';
 }
 
-// Mark challenge as complete
+// User data storage (localStorage demo)
+function getUsers() {
+    return JSON.parse(localStorage.getItem('users') || '[]');
+}
+function saveUsers(users) {
+    localStorage.setItem('users', JSON.stringify(users));
+}
+function getCurrentUser() {
+    return JSON.parse(localStorage.getItem('currentUser') || 'null');
+}
+function setCurrentUser(user) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+}
+
+// Registration
+function registerUser() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    if (!username || !email || !password) return alert('Fill all fields!');
+    let users = getUsers();
+    if (users.find(u => u.username === username)) return alert('Username taken!');
+    users.push({ username, email, password, points: 0 });
+    saveUsers(users);
+    closeModal('registerModal');
+    alert('Registered! Please login.');
+}
+
+// Login
+function loginUser() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    let users = getUsers();
+    let user = users.find(u => u.username === username && u.password === password);
+    if (!user) return alert('Invalid credentials!');
+    setCurrentUser(user);
+    closeModal('loginModal');
+    alert('Logged in!');
+    updateStats();
+}
+
+// Modal helpers
+function openModal(id) {
+    document.getElementById(id).style.display = 'block';
+}
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+// Update stats and leaderboard
+function updateStats() {
+    let user = getCurrentUser();
+    if (user) {
+        document.getElementById('statPoints').textContent = user.points;
+        // ...update other stats...
+    }
+    updateLeaderboard();
+}
+
+function updateLeaderboard() {
+    let users = getUsers();
+    users.sort((a, b) => b.points - a.points);
+    let top10 = users.slice(0, 10);
+    let html = top10.map(u => 
+        `<div class="leaderboard-item"><span>${u.username}</span><span>${u.points}</span></div>`
+    ).join('');
+    document.getElementById('leaderboardList').innerHTML = html;
+}
+
+// Award points when challenge is completed
 function markChallengeComplete() {
-    if (!currentChallenge) {
-        console.log('No current challenge to mark complete');
-        showNotification('No challenge to mark complete!');
+    let user = getCurrentUser();
+    if (!user) {
+        alert('Login to earn points!');
+        openModal('loginModal');
         return;
     }
-    
-    console.log('Marking challenge as complete:', currentChallenge);
-    
-    // Add to completed challenges
-    const completedChallenge = {
-        ...currentChallenge,
-        completedAt: new Date().toISOString()
-    };
-    
-    completedChallenges.unshift(completedChallenge);
-    
-    // Keep only last 10 completed challenges
-    completedChallenges = completedChallenges.slice(0, 10);
-    
-    // Save to localStorage
-    try {
-        localStorage.setItem('completedChallenges', JSON.stringify(completedChallenges));
-        console.log('Saved to localStorage');
-    } catch (e) {
-        console.error('Error saving to localStorage:', e);
-    }
-    
-    // Update UI
-    const markCompleteBtn = document.getElementById('markCompleteBtn');
-    if (markCompleteBtn) {
-        markCompleteBtn.textContent = 'Completed!';
-        markCompleteBtn.classList.add('success-animation');
-        markCompleteBtn.disabled = true;
-    }
-    
-    // Update history
-    updateChallengeHistory();
-    
-    // Show success notification
-    showNotification('Challenge completed! Great job! 🎉');
-    
-    // Reset button after 2 seconds
-    setTimeout(() => {
-        if (markCompleteBtn) {
-            markCompleteBtn.textContent = 'Mark Complete';
-            markCompleteBtn.classList.remove('success-animation');
-            markCompleteBtn.disabled = false;
-        }
-    }, 2000);
+    user.points += 10;
+    let users = getUsers();
+    let idx = users.findIndex(u => u.username === user.username);
+    users[idx] = user;
+    saveUsers(users);
+    setCurrentUser(user);
+    updateStats();
+    alert('Challenge completed! +10 points');
 }
 
-// ===== Gamification State =====
-const defaultGamification = {
-    points: 0,
-    level: 1,
-    levelProgress: 0, // 0-1
-    streak: 0,
-    lastCompletedDate: null,
-    badges: {}
-};
-
-let gamification = loadGamification();
-
-function loadGamification() {
-    try {
-        const raw = localStorage.getItem('gamification');
-        if (!raw) return { ...defaultGamification };
-        const parsed = JSON.parse(raw);
-        return { ...defaultGamification, ...parsed };
-    } catch (e) {
-        console.error('Failed to load gamification:', e);
-        return { ...defaultGamification };
-    }
-}
-
-function saveGamification() {
-    localStorage.setItem('gamification', JSON.stringify(gamification));
-}
-
-function getLevelThreshold(level) {
-    // Quadratic growth: 100, 300, 600, 1000, ...
-    return 50 * level * (level + 1);
-}
-
-function addPoints(basePoints) {
-    const points = Math.max(1, basePoints);
-    gamification.points += points;
-
-    // Level calc
-    const threshold = getLevelThreshold(gamification.level);
-    const totalForThisLevel = threshold;
-    const currentLevelStart = getLevelThreshold(gamification.level - 1) || 0;
-    const pointsIntoLevel = Math.max(0, gamification.points - currentLevelStart);
-    gamification.levelProgress = Math.min(1, pointsIntoLevel / (totalForThisLevel - currentLevelStart));
-
-    while (gamification.points >= getLevelThreshold(gamification.level)) {
-        gamification.level += 1;
-        showNotification(`Level up! You are now level ${gamification.level} 🔥`);
-        // Celebrate
-        unlockBadge('firstLevel', 'Level 2 Achieved', 'Reached level 2');
-    }
-
-    saveGamification();
-    updateGamificationUI();
-}
-
-function updateStreak() {
-    const today = new Date();
-    const todayKey = today.toDateString();
-    const last = gamification.lastCompletedDate ? new Date(gamification.lastCompletedDate).toDateString() : null;
-
-    if (last === todayKey) {
-        // already counted today
-        return;
-    }
-
-    if (last) {
-        const yesterday = new Date();
-        yesterday.setDate(today.getDate() - 1);
-        if (new Date(last).toDateString() === yesterday.toDateString()) {
-            gamification.streak += 1;
-        } else {
-            gamification.streak = 1; // reset to 1 for today
-        }
-    } else {
-        gamification.streak = 1;
-    }
-
-    gamification.lastCompletedDate = today.toISOString();
-
-    // Streak badges
-    if (gamification.streak === 1) unlockBadge('firstDay', 'First Step', 'Completed your first challenge');
-    if (gamification.streak === 3) unlockBadge('threeDay', 'On A Roll', '3-day streak');
-    if (gamification.streak === 7) unlockBadge('sevenDay', 'One Week Warrior', '7-day streak');
-    if (gamification.streak === 30) unlockBadge('thirtyDay', 'Month Master', '30-day streak');
-
-    saveGamification();
-    updateGamificationUI();
-}
-
-function unlockBadge(key, title, desc) {
-    if (gamification.badges[key]) return;
-    gamification.badges[key] = { title, desc, unlockedAt: new Date().toISOString() };
-    saveGamification();
-    updateBadgesUI();
-    showNotification(`Badge unlocked: ${title} 🏅`);
-}
-
-function updateGamificationUI() {
-    const pointsEl = document.getElementById('statPoints');
-    const streakEl = document.getElementById('statStreak');
-    const levelEl = document.getElementById('statLevel');
-    const progressText = document.getElementById('levelProgressText');
-    const progressFill = document.getElementById('levelProgressFill');
-
-    if (pointsEl) pointsEl.textContent = gamification.points.toString();
-    if (streakEl) streakEl.textContent = gamification.streak.toString();
-    if (levelEl) levelEl.textContent = gamification.level.toString();
-    if (progressText) progressText.textContent = `${Math.round(gamification.levelProgress * 100)}%`;
-    if (progressFill) progressFill.style.width = `${Math.round(gamification.levelProgress * 100)}%`;
-}
-
-function updateBadgesUI() {
-    const grid = document.getElementById('badgesGrid');
-    if (!grid) return;
-
-    const allBadges = [
-        { key: 'firstDay', title: 'First Step', desc: 'Completed your first challenge', icon: '1' },
-        { key: 'threeDay', title: 'On A Roll', desc: '3-day streak', icon: '3' },
-        { key: 'sevenDay', title: 'One Week Warrior', desc: '7-day streak', icon: '7' },
-        { key: 'thirtyDay', title: 'Month Master', desc: '30-day streak', icon: '30' },
-        { key: 'firstLevel', title: 'Level 2 Achieved', desc: 'Reached level 2', icon: 'L2' },
-        { key: 'tenChallenges', title: 'Top Ten', desc: 'Completed 10 challenges', icon: '10' },
-        { key: 'fiftyChallenges', title: 'Fitty', desc: 'Completed 50 challenges', icon: '50' }
-    ];
-
-    grid.innerHTML = allBadges.map(b => {
-        const unlocked = !!gamification.badges[b.key];
-        return `
-            <div class="badge-card ${unlocked ? '' : 'locked'}">
-                <div class="badge-icon">${b.icon}</div>
-                <div class="badge-title">${b.title}</div>
-                <div class="badge-desc">${b.desc}</div>
-            </div>
-        `;
-    }).join('');
-}
-
-// Hook into completion
-const originalMarkComplete = markChallengeComplete;
-markChallengeComplete = function() {
-    // Call original
-    originalMarkComplete.apply(this, arguments);
-
-    // Award points by difficulty
-    const diff = (currentChallenge && currentChallenge.difficulty) || 'easy';
-    const pointsMap = { easy: 10, medium: 20, hard: 35 };
-    addPoints(pointsMap[diff] || 10);
-
-    // Streak handling
-    updateStreak();
-
-    // Total completed badges
-    const totalCompleted = (JSON.parse(localStorage.getItem('completedChallenges') || '[]') || []).length;
-    if (totalCompleted >= 10) unlockBadge('tenChallenges', 'Top Ten', 'Completed 10 challenges');
-    if (totalCompleted >= 50) unlockBadge('fiftyChallenges', 'Fitty', 'Completed 50 challenges');
-}
+// Show modals from nav (add buttons in nav or elsewhere)
+document.querySelector('.nav-menu').insertAdjacentHTML('beforeend', `
+    <a href="#" class="nav-link" onclick="openModal('loginModal');return false;">Login</a>
+    <a href="#" class="nav-link" onclick="openModal('registerModal');return false;">Register</a>
+`);
 
 // Initialize UI on load
 document.addEventListener('DOMContentLoaded', () => {

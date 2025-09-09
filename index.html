@@ -171,6 +171,39 @@
         </div>
     </section>
 
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('registerModal')">&times;</span>
+        <h2>Register</h2>
+        <input type="text" id="regUsername" placeholder="Username" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Password" required>
+        <button onclick="registerUser()">Register</button>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal('loginModal')">&times;</span>
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="loginUser()">Login</button>
+      </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <section class="leaderboard-section">
+      <div class="container">
+        <h3>Leaderboard</h3>
+        <div id="leaderboardList" class="leaderboard-list">
+          <!-- Top 10 users will be shown here -->
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
