@@ -180,6 +180,9 @@
         <input type="email" id="regEmail" placeholder="Email" required>
         <input type="password" id="regPassword" placeholder="Password" required>
         <button onclick="registerUser()">Register</button>
+        <div style="margin-top:16px;">
+          <button class="btn-link" onclick="switchToLogin()">Already have an account? Login</button>
+        </div>
       </div>
     </div>
 
@@ -188,9 +191,12 @@
       <div class="modal-content">
         <span class="close" onclick="closeModal('loginModal')">&times;</span>
         <h2>Login</h2>
-        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="text" id="loginUsername" placeholder="Username or Email" required>
         <input type="password" id="loginPassword" placeholder="Password" required>
         <button onclick="loginUser()">Login</button>
+        <div style="margin-top:16px;">
+          <button class="btn-link" onclick="switchToRegister()">New to the site? Register first.</button>
+        </div>
       </div>
     </div>
 

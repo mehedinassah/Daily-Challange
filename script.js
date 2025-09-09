@@ -524,21 +524,21 @@ function registerUser() {
     if (users.find(u => u.username === username)) return alert('Username taken!');
     users.push({ username, email, password, points: 0 });
     saveUsers(users);
-    closeModal('registerModal');
-    alert('Registered! Please login.');
+    setCurrentUser({ username, email, password, points: 0 });
+    afterAuthSuccess();
 }
 
 // Login
 function loginUser() {
-    const username = document.getElementById('loginUsername').value.trim();
+    const usernameOrEmail = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
     let users = getUsers();
-    let user = users.find(u => u.username === username && u.password === password);
+    let user = users.find(u => 
+        (u.username === usernameOrEmail || u.email === usernameOrEmail) && u.password === password
+    );
     if (!user) return alert('Invalid credentials!');
     setCurrentUser(user);
-    closeModal('loginModal');
-    alert('Logged in!');
-    updateStats();
+    afterAuthSuccess();
 }
 
 // Modal helpers
@@ -573,8 +573,9 @@ function updateLeaderboard() {
 function markChallengeComplete() {
     let user = getCurrentUser();
     if (!user) {
-        alert('Login to earn points!');
+        // Show modal and message
         openModal('loginModal');
+        alert('You need to login/register first.');
         return;
     }
     user.points += 10;
@@ -585,6 +586,14 @@ function markChallengeComplete() {
     setCurrentUser(user);
     updateStats();
     alert('Challenge completed! +10 points');
+}
+
+// After login/register, redirect to home
+function afterAuthSuccess() {
+    closeModal('loginModal');
+    closeModal('registerModal');
+    window.location.hash = '#home';
+    updateStats();
 }
 
 // Show modals from nav (add buttons in nav or elsewhere)
