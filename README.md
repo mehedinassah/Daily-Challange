@@ -1,1 +1,1 @@
-This project is a gamified task website where users receive a random task every day. By completing the task, users earn points, encouraging consistency, productivity, and fun daily challenges.
+This project is a gamified task website where users receive a random task every day. By completing the task, users earn points, encouraging consistency, productivity, and fun daily challenges. Quite fun. Isn't it?
